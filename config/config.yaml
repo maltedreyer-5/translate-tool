@@ -1,0 +1,325 @@
+# SPDX-FileCopyrightText: 2026 Malte Dreyer
+# SPDX-License-Identifier: MIT
+# ============================================================================
+# Document Translation System - Main Configuration
+# This file contains the configuration values loaded by src/config.py.
+#
+# Installation-specific values (endpoint, model, host, footer links, ...)
+# belong in config/config.local.yaml, which is merged over this file and is
+# not part of the repository. Environment variables override both files:
+#   OPENAI_API_BASE, OPENAI_API_KEY, DEBUG, TEMP_DIR and
+#   TRANSLATION_<SECTION>__<KEY>, e.g. TRANSLATION_LOGGING__LEVEL=DEBUG.
+#
+# Sections marked "ignored" are accepted so that existing configuration files
+# keep validating, but their values have no effect.
+# ============================================================================
+
+# LLM API Configuration
+llm:
+  # Any OpenAI-compatible endpoint (Ollama, vLLM, LM Studio, ...).
+  api_base: "http://localhost:11434/v1"
+  # Prefer the OPENAI_API_KEY environment variable; the value below is only a
+  # placeholder default for local, auth-less LLM servers.
+  api_key: "local-llm-key"
+  # Placeholder: set this to the model name your server exposes.
+  model: "your-model-name"
+  # null = do not send a temperature, the server/model default applies.
+  # Set a number (0.0-2.0) only if your model needs a specific value.
+  temperature: null
+  # Answer length limit: "auto" sizes it per request from the text and the
+  # free part of context_window; an answer cut off at the limit is requested
+  # again or the text is split - nothing is silently lost. A number sets a
+  # fixed limit for every request.
+  max_tokens: "auto"
+  # Extra answer tokens for models that reason before answering.
+  reasoning_reserve_tokens: 0
+  timeout: 120
+  # timeout: seconds a single request may take, including generation.
+  # Retry: a failed request (connection error, timeout, HTTP 429/5xx) is
+  # attempted up to max_retries times in total, with exponential backoff
+  # (retry_delay * 2^attempt) capped at max_retry_delay, so a failing
+  # section cannot block a job indefinitely.
+  max_retries: 3
+  retry_delay: 5
+  max_retry_delay: 30
+  # Context window of the model: prompt and answer must fit into it. Used for
+  # the answer limit and to shorten the glossary if the prompt would not fit.
+  context_window: 32000
+
+# Async Operations Configuration
+# Only max_concurrent_tasks is used; all other keys in this section are ignored.
+async_config:
+  # Graceful shutdown settings
+  shutdown_timeout: 5
+  task_cancellation_timeout: 3.0
+
+  # Client pool settings
+  client_pool_limit: 20
+  client_pool_per_host: 2
+
+  # Connection settings
+  connection_keepalive_timeout: 120
+  connection_ttl_dns_cache: 300
+
+  # Event Loop monitoring
+  enable_cleanup_logging: true
+  event_loop_check_interval: 1.0
+
+  # Session management
+  session_cleanup_interval: 80
+  max_idle_sessions: 10
+
+  # Task management
+  # max_concurrent_tasks: maximum number of simultaneous translation jobs
+  # (the concurrency limit of the Gradio queue)
+  max_concurrent_tasks: 5
+  task_monitoring_enabled: true
+
+  # Recovery settings
+  auto_recovery_enabled: true
+  max_recovery_attempts: 4
+  recovery_delay: 60.0
+
+# Chunking Configuration
+# Only chars_per_token is used here (fallback per language); max_tokens and
+# max_table_tokens are ignored - the section size is simple_chunking.max_tokens.
+chunking:
+  max_tokens: 500
+  max_table_tokens: 3000
+  chars_per_token:
+    en: 4.0
+    de: 3.5
+    fr: 4.2
+    es: 4.1
+    it: 4.0
+    pt: 4.0
+    nl: 3.8
+    pl: 3.6
+    ru: 3.0
+    zh: 1.5
+    ja: 2.0
+    ko: 2.5
+    default: 4.0
+
+# Parallel Processing Configuration
+# Limits for parallel work. Upper bound of simultaneous model requests:
+#   max_concurrent_requests (all users together), if set; otherwise
+#   async_config.max_concurrent_tasks (jobs) x rate_limit (requests per job).
+parallel_processing:
+  # Sections of one job translated at the same time.
+  max_workers: 3
+  # Simultaneous model requests of one job (sections, table cells, glossary).
+  rate_limit: 20
+  # Simultaneous model requests of the whole application; null = no limit.
+  max_concurrent_requests: null
+
+simple_chunking:
+  # Section size in tokens. Sections are cut at headings, then paragraphs,
+  # then sentences; each section is translated with its heading and the
+  # neighbouring text as context.
+  max_tokens: 700
+  chars_per_token: 4.0
+
+  # Language-specific overrides
+  language_overrides:
+    en: 4.0
+    de: 3.5
+    fr: 3.8
+    es: 3.9
+    it: 3.9
+    pt: 3.9
+    nl: 3.6
+    ru: 3.2
+    zh: 1.5
+    ja: 1.8
+    ko: 2.0
+    ar: 3.0
+    hi: 2.5
+
+  # Sentence splitting settings (ignored)
+  min_sentence_length: 10
+  fallback_to_char_based: true
+
+document_processing:
+  max_file_size_mb: 30
+  supported_formats:
+    - "pdf"
+    - "docx"
+    - "txt"
+    - "md"
+  # Working directory for uploads during processing (relative to the
+  # project root). Can be overridden with the TEMP_DIR environment variable.
+  temp_dir: "./temp"
+  # PDF: run OCR (Tesseract) on pages without a text layer. Requires
+  # Tesseract and the language data to be installed; otherwise no OCR happens.
+  pdf_ocr: true
+  # Tesseract language codes, e.g. "eng", "deu" or "deu+eng".
+  pdf_ocr_language: "eng"
+  # Uploaded files stay in Gradio's cache (GRADIO_TEMP_DIR, default
+  # <system temp>/gradio) so that a document can be translated again.
+  # Files older than this many minutes are deleted; the cache is also
+  # cleared when the server starts. null = never delete.
+  upload_retention_minutes: 60
+  # Word documents: "inplace" translates inside the original file, so layout,
+  # styles, headers/footers, footnotes, text boxes, images and formatting are
+  # kept; "markdown" builds a new document from the translated text.
+  docx_mode: "inplace"
+
+# Interface Configuration
+interface:
+  # 127.0.0.1 = reachable from this machine only. Use 0.0.0.0 (in
+  # config.local.yaml) only behind a VPN, firewall or authenticating proxy:
+  # the application has no user management of its own.
+  host: "127.0.0.1"
+  port: 7867
+  # URL prefix when served behind a reverse proxy.
+  root_path: "/translate"
+  theme: "soft"  # ignored
+  debug_mode: false
+  # "auto" = browser language (Accept-Language), or fixed "en" / "de".
+  # fallback_language applies when the browser asks for neither.
+  # The URL parameter ?lang=de or ?lang=en overrides both.
+  language: "auto"
+  fallback_language: "en"
+  # One text for all languages, or one per language.
+  title:
+    en: "Document Translator"
+    de: "Dokumentenübersetzer"
+  description:
+    en: "Translate texts and documents with a local language model"
+    de: "Übersetzen Sie Texte und Dokumente mit einem lokalen Sprachmodell"
+  # Optional HTTP basic authentication (both values required). Prefer the
+  # environment variable TRANSLATION_INTERFACE__AUTH_PASSWORD for the password.
+  auth_username: null
+  auth_password: null
+  # Links shown below the interface, e.g. imprint or privacy policy:
+  # footer_links:
+  #   - label: "Privacy policy"
+  #     url: "https://example.org/privacy"
+  footer_links: []
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "translation_app.log"
+  max_size_mb: 10
+  backup_count: 5
+
+  # Performance logging
+  performance_logging:
+    enabled: true
+    log_slow_translations: true
+    slow_translation_threshold: 10.0
+    log_memory_usage: false
+
+# Translation Configuration
+translation:
+  # Quality features
+  # auto_glossary: a first pass collects recurring terms and translates
+  #   them once -> all sections use the same terminology (extra model calls).
+  # structural_check: local comparison of source and translation (numbers,
+  #   list items, table rows, glossary adherence). No model calls.
+  # quality_check: a second pass lets the model compare each translated
+  #   section with the source (omissions, additions, changed meaning).
+  auto_glossary: true
+  auto_glossary_max_terms: 100
+  structural_check: true
+  quality_check: false
+  # Style continuity across sections: "two_wave" translates the first text
+  # section first and gives its translation to all other sections as style
+  # reference; "sequential" hands each translation on to the next section
+  # (strongest continuity, no parallelism); "parallel" uses no reference.
+  context_mode: "two_wave"
+  # Length of the style reference in characters (0 = off).
+  style_reference_chars: 600
+  # Language of the instructions to the model ("de" or "en"); independent of
+  # the interface language. tools/prompt_eval.py compares both with your model.
+  prompt_language: "de"
+  # Tables: "cell" = every cell on its own; "row" = one request per row.
+  table_mode: "cell"
+  # Automatic glossary: "model" = one request selects and translates the
+  # terms; "heuristic" = capitalisation-based candidates, one request each.
+  auto_glossary_method: "model"
+  # Show translated sections while the job is still running.
+  show_partial_results: true
+  default_source_lang: "de"
+  default_target_lang: "en"
+  available_styles:
+    - "professionell_sie"
+    - "professionell_du"
+    - "akademisch"
+    - "einfach"
+    - "technisch"
+  default_style: "professionell_sie"
+
+# Export Configuration
+export:
+  markdown:  # ignored
+    preserve_line_breaks: true
+    code_style: "fenced"
+  word:
+    # Prepend a block with languages, style and date to the Word export.
+    include_header: false
+    # template, font and font_size are ignored.
+    template: null
+    font: "Calibri"
+    font_size: 11
+
+# Development Configuration (ignored)
+development:
+  hot_reload: false
+  show_examples: false
+  collect_metrics: false
+  test_mode: false
+
+# Glossary Configuration
+glossary:
+  max_entries: 1000
+  case_sensitive_default: false
+  csv_delimiter: ","
+  # Glossary of the organisation: fixed translations of names and terms for
+  # all translations (CSV with the columns source_lang,target_lang,term,
+  # translation; see config/organization_glossary.example.csv). Re-read when
+  # the file changes. null = not used.
+  organization_file: null
+
+# Debugging Configuration (ignored)
+debugging:
+  # Event Loop monitoring
+  log_event_loop_status: false
+  event_loop_check_frequency: 30
+
+  # Session lifecycle tracking
+  track_session_lifecycle: false
+  log_session_creation: false
+  log_session_closure: false
+
+  # Task monitoring
+  monitor_task_completion: false
+  log_task_lifecycle: false
+  track_active_tasks: true
+
+  # Client management debugging
+  log_client_operations: false
+  monitor_client_pool: false
+
+  # Performance monitoring
+  track_request_timing: false
+  log_slow_requests: false
+  slow_request_threshold: 5.0
+
+  # Memory monitoring
+  enable_memory_monitoring: false
+  memory_check_interval: 60
+
+# Backwards Compatibility Settings (ignored)
+backwards_compatibility:
+  # Legacy system support
+  support_legacy_chunker: false
+  support_legacy_retry_handler: false
+  support_legacy_translation_engine: false
+
+  # Migration warnings
+  warn_on_legacy_usage: true
+  deprecation_warnings: true

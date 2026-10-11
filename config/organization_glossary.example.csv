@@ -1,0 +1,12 @@
+# Glossary of the organisation (example). Copy to a file of your own, e.g.
+# config/organization_glossary.csv, and set glossary.organization_file to it
+# in config/config.local.yaml. UTF-8, one term per row and language pair.
+# Lines starting with # are comments.
+source_lang,target_lang,term,translation
+de,en,Akademischer Senat,Academic Senate
+de,en,Studierendenservice,Student Services
+de,en,Prüfungsausschuss,Examination Board
+de,en,Studien- und Prüfungsordnung,Study and Examination Regulations
+de,en,Rechenzentrum,Computing Centre
+en,de,Academic Senate,Akademischer Senat
+en,de,Student Services,Studierendenservice

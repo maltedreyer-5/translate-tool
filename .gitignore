@@ -1,0 +1,27 @@
+# --- Runtime state written by the application (never commit) ---------------
+# Log file (logging.file) and its rotations
+translation_app.log
+translation_app.log.*
+# Working directories for uploads (document_processing.temp_dir)
+temp/*
+!temp/.gitkeep
+# Installation-specific configuration and secrets
+config/config.local.yaml
+config/organization_glossary.csv
+.env
+
+# Handover note for the maintainer; never part of the repository
+RELEASE-CHECKLIST.md
+
+# --- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# --- Editors / OS -----------------------------------------------------------
+.idea/
+.vscode/
+.DS_Store

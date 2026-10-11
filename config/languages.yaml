@@ -1,0 +1,197 @@
+# SPDX-FileCopyrightText: 2026 Malte Dreyer
+# SPDX-License-Identifier: MIT
+# Language configuration of the translation interface
+# Defines the available languages and their properties.
+
+# Available languages. The interface shows native_name and passes the code;
+# name is accepted as an alternative identifier. available_as_source /
+# available_as_target control the two dropdowns. sentence_endings is ignored.
+languages:
+  # Automatic detection (source only)
+  auto:
+    name: "Detect automatically"
+    code: "auto"
+    available_as_source: true
+    available_as_target: false
+    
+  # German
+  de:
+    name: "German"
+    code: "de"
+    native_name: "Deutsch"
+    available_as_source: true
+    available_as_target: true
+    # Estimated characters per token (section size estimate)
+    chars_per_token: 3.5
+    # Sentence endings (ignored)
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # English
+  en:
+    name: "English"
+    code: "en"
+    native_name: "English"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 4.0
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # French
+  fr:
+    name: "French"
+    code: "fr"
+    native_name: "Français"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 4.2
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # Spanish
+  es:
+    name: "Spanish"
+    code: "es"
+    native_name: "Español"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 4.1
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # Italian
+  it:
+    name: "Italian"
+    code: "it"
+    native_name: "Italiano"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 4.0
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # Portuguese
+  pt:
+    name: "Portuguese"
+    code: "pt"
+    native_name: "Português"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 4.0
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # Dutch
+  nl:
+    name: "Dutch"
+    code: "nl"
+    native_name: "Nederlands"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 3.8
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # Polish
+  pl:
+    name: "Polish"
+    code: "pl"
+    native_name: "Polski"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 3.6
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # Russian
+  ru:
+    name: "Russian"
+    code: "ru"
+    native_name: "Русский"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 3.0
+    sentence_endings: [".", "!", "?", ":", ";"]
+    
+  # Chinese (Simplified)
+  zh:
+    name: "Chinese (Simplified)"
+    code: "zh"
+    native_name: "中文"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 1.5
+    sentence_endings: ["。", "！", "？", "；", "："]
+    
+  # Japanese
+  ja:
+    name: "Japanese"
+    code: "ja"
+    native_name: "日本語"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 2.0
+    sentence_endings: ["。", "！", "？", "；", "："]
+    
+  # Korean
+  ko:
+    name: "Korean"
+    code: "ko"
+    native_name: "한국어"
+    available_as_source: true
+    available_as_target: true
+    chars_per_token: 2.5
+    sentence_endings: [".", "!", "?", ":", ";"]
+
+# Language pairs with special settings (ignored)
+language_pairs:
+  de-en:
+    # Special glossary entries for DE->EN
+    common_terms:
+      - ["GmbH", "Ltd."]
+      - ["AG", "Inc."]
+      - ["Geschäftsführer", "Managing Director"]
+    
+  en-de:
+    common_terms:
+      - ["Ltd.", "GmbH"]
+      - ["Inc.", "AG"]
+      - ["CEO", "Geschäftsführer"]
+
+# Style definitions per language (ignored)
+style_adjustments:
+  professionell:
+    de:
+      formality: "Sie-Form"
+      tone: "formal"
+    en:
+      formality: "formal"
+      tone: "professional"
+    
+  akademisch:
+    de:
+      formality: "wissenschaftlich"
+      tone: "präzise"
+    en:
+      formality: "academic"
+      tone: "scholarly"
+    
+  einfach:
+    de:
+      formality: "Du-Form"
+      tone: "umgangssprachlich"
+    en:
+      formality: "casual"
+      tone: "conversational"
+    
+  technisch:
+    de:
+      formality: "neutral"
+      tone: "technisch"
+    en:
+      formality: "neutral"
+      tone: "technical"
+
+# Automatic detection settings (ignored)
+auto_detection:
+  # Minimum text length for reliable detection (characters)
+  min_text_length: 20
+  
+  # Confidence threshold (0.0 - 1.0)
+  confidence_threshold: 0.7
+  
+  # Fallback language if detection is uncertain
+  fallback_language: "en"

@@ -1,0 +1,93 @@
+# SPDX-FileCopyrightText: 2026 Malte Dreyer
+# SPDX-License-Identifier: MIT
+# Reference set for tools/prompt_eval.py. Each item: source text, language
+# pair, style key, formality and one reference translation. Extend it with
+# texts typical for your documents; the scores compare prompt languages on the
+# same model, they are not an absolute quality measure.
+items:
+  - id: letter-formal
+    source_lang: de
+    target_lang: en
+    style: professionell_sie
+    formality: formal
+    source: |
+      Sehr geehrte Damen und Herren,
+      wir bestätigen den Eingang Ihres Antrags vom 3. März. Die Prüfung dauert in der Regel vier Wochen.
+    reference: |
+      Dear Sir or Madam,
+      We confirm receipt of your application of 3 March. The review usually takes four weeks.
+  - id: list
+    source_lang: de
+    target_lang: en
+    style: preserve_original
+    formality: formal
+    source: |
+      Bitte bringen Sie folgende Unterlagen mit:
+      - Personalausweis
+      - Immatrikulationsbescheinigung
+      - Nachweis über die Krankenversicherung
+    reference: |
+      Please bring the following documents:
+      - Identity card
+      - Certificate of enrolment
+      - Proof of health insurance
+  - id: table
+    source_lang: de
+    target_lang: en
+    style: preserve_original
+    formality: formal
+    source: |
+      | Maßnahme | Verantwortlich | Frist |
+      | --- | --- | --- |
+      | Schulung der Mitarbeitenden | Personalabteilung | 30.06.2026 |
+      | Überprüfung der Zugänge | IT-Sicherheit | 15.07.2026 |
+    reference: |
+      | Measure | Responsible | Deadline |
+      | --- | --- | --- |
+      | Staff training | Human Resources | 30.06.2026 |
+      | Review of access rights | IT Security | 15.07.2026 |
+  - id: academic
+    source_lang: de
+    target_lang: en
+    style: akademisch
+    formality: formal
+    source: |
+      Die Ergebnisse deuten darauf hin, dass die Wirkung der Intervention bei jüngeren Teilnehmenden stärker ausgeprägt ist (n = 214, p < 0,05).
+    reference: |
+      The results indicate that the effect of the intervention is more pronounced among younger participants (n = 214, p < 0.05).
+  - id: informal-de
+    source_lang: en
+    target_lang: de
+    style: professionell_du
+    formality: informal
+    source: |
+      You can change your password at any time in your account settings. If you have any questions, please contact us.
+    reference: |
+      Du kannst dein Passwort jederzeit in deinen Kontoeinstellungen ändern. Wenn du Fragen hast, melde dich bitte bei uns.
+  - id: formal-de
+    source_lang: en
+    target_lang: de
+    style: professionell_sie
+    formality: formal
+    source: |
+      Please submit the completed form by Friday. We will then send you the confirmation by e-mail.
+    reference: |
+      Bitte reichen Sie das ausgefüllte Formular bis Freitag ein. Wir senden Ihnen anschließend die Bestätigung per E-Mail.
+  - id: plain-language
+    source_lang: de
+    target_lang: en
+    style: einfach
+    formality: formal
+    source: |
+      Die Inanspruchnahme der Leistung setzt eine fristgerechte Antragstellung voraus.
+    reference: |
+      To receive the service, you must apply in time.
+  - id: markup
+    source_lang: de
+    target_lang: en
+    style: preserve_original
+    formality: formal
+    source: |
+      Die Frist endet am **31. Mai**; Details finden Sie im [Merkblatt](https://example.org/merkblatt).
+    reference: |
+      The deadline ends on **31 May**; you can find details in the [information sheet](https://example.org/merkblatt).

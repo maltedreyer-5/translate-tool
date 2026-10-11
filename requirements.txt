@@ -1,0 +1,32 @@
+# Runtime dependencies. This file is the single source of truth for what the
+# application needs; constraints.txt pins the exact versions it was tested with.
+#
+#   pip install -r requirements.txt                      # allowed ranges
+#   pip install -r requirements.txt -c constraints.txt   # tested versions
+
+# Web interface
+gradio>=6.0,<7
+
+# HTTP client for the OpenAI-compatible model endpoint
+aiohttp>=3.9,<4
+aiofiles>=23.0
+
+# Configuration
+pydantic>=2.0,<3
+pydantic-settings>=2.0,<3
+PyYAML>=6.0,<7
+
+# Document formats
+# PyMuPDF and pymupdf4llm are licensed under AGPL-3.0 (or commercially by
+# Artifex); see README, section "Third-party components".
+PyMuPDF>=1.23
+pymupdf4llm>=0.0.17
+python-docx>=1.1,<2
+
+# Export
+markdown2>=2.4,<3
+beautifulsoup4>=4.12,<5
+
+# Optional: memory figures in the performance log
+# (logging.performance_logging.log_memory_usage)
+psutil>=5.9
